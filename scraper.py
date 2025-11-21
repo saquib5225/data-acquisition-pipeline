@@ -19,13 +19,12 @@ def scrape_csgo_majors():
 
     soup = BeautifulSoup(response.text, "lxml")
 
-    # Grab the first 'wikitable'
+    # first wikitable
     table = soup.find("table", {"class": "wikitable"})
 
-    # Parse to DataFrame
+    # Parse to df
     df = pd.read_html(str(table))[0]
 
-    # --- FIX: Flatten MultiIndex column names ---
     new_cols = []
     for col in df.columns:
         if isinstance(col, tuple):
@@ -36,7 +35,6 @@ def scrape_csgo_majors():
 
     df.columns = new_cols
 
-    # Strip whitespace
     df.columns = [c.strip() for c in df.columns]
 
     return df
