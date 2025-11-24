@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CS:GO Majors Data Pipeline</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+            color: #222;
+        }
+        h1 {
+            color: #1a73e8;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        pre {
+            background: #eee;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+
+<h1>CS:GO Major Championships Data Pipeline</h1>
+
+<div class="section">
+    <h2>1. Project Overview</h2>
+    <p>
+        This project implements an end-to-end data acquisition and preprocessing pipeline
+        hosted on a Google Cloud Platform (GCP) Virtual Machine. The system scrapes
+        tournament data for CS:GO Major Championships from Wikipedia, cleans and transforms
+        the data, and loads it into a SQLite database.
+    </p>
+</div>
+
+<div class="section">
+    <h2>2. Technologies Used</h2>
+    <ul>
+        <li>Google Cloud Platform VM</li>
+        <li>Python (Requests, BeautifulSoup, Pandas)</li>
+        <li>SQLite Database</li>
+        <li>Git + GitHub</li>
+        <li>Pytest (Unit + Integration Tests)</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>3. Pipeline Components</h2>
+    <p><strong>Scraper:</strong> Extracts tournament data from Wikipedia.</p>
+    <p><strong>Transformer:</strong> Cleans and standardizes the data.</p>
+    <p><strong>Loader:</strong> Stores cleaned data into SQLite.</p>
+    <p><strong>Orchestrator:</strong> Runs the full pipeline automatically.</p>
+</div>
+
+<div class="section">
+    <h2>4. Sample Pipeline Output</h2>
+    <p>Example rows extracted:</p>
+    <pre>
+Tournament: DreamHack Winter 2013
+Date: November 28, 2013
+Location: Jönköping
+Winner: Fnatic
+
+Tournament: EMS One Katowice 2014
+Date: March 13, 2014
+Location: Katowice
+Winner: Virtus.pro
+    </pre>
+</div>
+
+<div class="section">
+    <h2>5. Testing Summary</h2>
+    <p>Both unit and integration tests passed successfully.</p>
+    <pre>
+$ pytest tests/
+2 passed, 0 failed
+    </pre>
+</div>
+
+<div class="section">
+    <h2>6. Ethical Considerations</h2>
+    <p>
+        Data was scraped only from publicly accessible Wikipedia pages following
+        Creative Commons licensing. No personal or sensitive data was collected.
+        The scraper respects legal and ethical guidelines.
+    </p>
+</div>
+
+<div class="section">
+    <h2>7. Attribution</h2>
+    <ul>
+        <li>Wikipedia data source: CS:GO Major Championships page</li>
+        <li>Python libraries: Requests, BeautifulSoup, Pandas</li>
+        <li>SQLite database engine</li>
+    </ul>
+</div>
+
+</body>
+</html>

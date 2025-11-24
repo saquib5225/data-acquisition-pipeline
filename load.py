@@ -1,11 +1,10 @@
 import sqlite3
-import pandas as pd
 
 DB_NAME = "csgo_majors.db"
 
 def init_db():
     """
-    Creates the database and table if it doesn't exist.
+    Creates the SQLite database and table if they do not exist yet.
     """
 
     conn = sqlite3.connect(DB_NAME)
@@ -13,53 +12,61 @@ def init_db():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS majors (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
             tournament TEXT,
             date TEXT,
+            organizer TEXT,
             location TEXT,
             prize_pool REAL,
             winner TEXT,
-            runner_up TEXT
-        );
+            runner_up TEXT,
+            finals_result TEXT
+        )
     """)
 
     conn.commit()
     conn.close()
 
 
-def load_data(df):
+def load_data(clean_df):
     """
-    Loads a cleaned DataFrame into the SQLite database.
+    Loads the cleaned DataFrame into the SQLite database.
+    Ensures prize_pool is always stored as float.
     """
 
     conn = sqlite3.connect(DB_NAME)
-    
-    # Only keep relevant columns (rename to DB schema)
-    df = df.rename(columns={
-        df.columns[0]: "tournament",
-        df.columns[1]: "date",
-        df.columns[2]: "location",
-        df.columns[3]: "prize_pool",
-        df.columns[4]: "winner",
-        df.columns[5]: "runner_up"
-    })
+    cursor = conn.cursor()
 
-    df_to_insert = df[["tournament", "date", "location", "prize_pool", "winner", "runner_up"]]
+    # Ensure column presence
+    for required in ["Tournament", "Date", "Organizer", "Location", "Prize Pool", "Winner", "Runner-up", "Finals Result"]:
+        if required not in clean_df.columns:
+            clean_df[required] = "" if required != "Prize Pool" else 0.0
 
-    df_to_insert.to_sql("majors", conn, if_exists="append", index=False)
+    # Enforce float type for Prize Pool
+    clean_df["Prize Pool"] = clean_df["Prize Pool"].astype(float)
 
+    for _, row in clean_df.iterrows():
+        cursor.execute(
+            """
+            INSERT INTO majors (tournament, date, organizer, location, prize_pool, winner, runner_up, finals_result)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                row["Tournament"],
+                row["Date"],
+                row["Organizer"],
+                row["Location"],
+                row["Prize Pool"],
+                row["Winner"],
+                row["Runner-up"],
+                row["Finals Result"]
+            )
+        )
+
+    conn.commit()
     conn.close()
 
 
-# For testing purposes
 if __name__ == "__main__":
-    from scraper import scrape_csgo_majors
-    from transform import clean_csgo_majors
-
-    raw = scrape_csgo_majors()
-    clean = clean_csgo_majors(raw)
-
+    print("Initializing database...")
     init_db()
-    load_data(clean)
-
-    print("Database loaded successfully.")
+    print("Database initialized. Run run_pipeline.py to load data.")

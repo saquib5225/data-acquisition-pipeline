@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-md-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="card-title">Project Overview</h3>
+        <p class="card-text">
+          This web app displays data from an end-to-end CS:GO Major Championships
+          data pipeline. The system:
+        </p>
+        <ul>
+          <li>Scrapes tournament data from Wikipedia</li>
+          <li>Cleans and transforms the raw data</li>
+          <li>Loads it into a SQLite database</li>
+          <li>Displays data via a Flask web interface</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="card-title">Total Prize Pool by Year</h4>
+        <canvas id="prizeChart" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="card-title">CS:GO Major Tournaments</h4>
+        <div class="table-responsive">
+          <table class="table table-striped table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th>#</th>
+                <th>Tournament</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th>Prize Pool</th>
+                <th>Winner</th>
+                <th>Runner-up</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in majors %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ row['tournament'] }}</td>
+                <td>{{ row['date'] }}</td>
+                <td>{{ row['location'] }}</td>
+                <td>${{ "%.0f"|format(row['prize_pool'] or 0) }}</td>
+                <td>{{ row['winner'] }}</td>
+                <td>{{ row['runner_up'] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <p class="text-muted mb-0">Data source: Wikipedia – CS:GO Major Championships.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const years = {{ years | tojson }};
+  const prizes = {{ prizes | tojson }};
+
+  new Chart(document.getElementById("prizeChart"), {
+    type: "line",
+    data: {
+      labels: years,
+      datasets: [{
+        label: "Total Prize Pool (USD)",
+        data: prizes
+      }]
+    }
+  });
+</script>
+{% endblock %}
